@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<body>
+
+
+<div style="display:flex;justify-content: space-between; max-width: 1800px;">
+    <div style="width: 60%;">
+        <canvas id="myChart2" style="width:100%;"></canvas>
+    </div>
+    <div style="width: 40%;">
+        <canvas id="myChart3" style="width:100%;"></canvas>
+    </div>
+</div>
+
+<div style="display:flex;justify-content: space-between; max-width: 1500px;">
+    <div style="width: 100%;">
+        <select id="chartSelector">
+            <option value="month">Show Monthly Chart</option>
+            <option value="year">Show Yearly Chart</option>
+        </select>
+        <select id="monthSelector" style="display: none;">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+        </select>
+
+        <select id="yearSelector">
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+        </select>
+        <button id="generateButton">Generate Chart</button>
+        <canvas id="myChart1" style="width:100%;"></canvas>
+    </div>
+    <div style="width: 0;">
+        <!--        <canvas id="myChart3" style="width:100%;"></canvas>-->
+    </div>
+</div>
+
+
+<script>
+    const xValuesBar = ["April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const packageRevenue = [2060, 1070, 1110, 1330, 2210, 7830, 2478, 3000, 4000];
+    const extraFoodRevenue = [3900, 2000, 2700, 4000, 5000, 6000, 7000, 5000, 3000];
+    const extraBeverageRevenue = [5000, 6000, 4000, 2000, 1000, 200, 100, 500, 400];
+    const otherRevenue = [1000, 8000, 5000, 3000, 2000, 500, 600, 400, 600];
+    const totalRevenue = packageRevenue.map((value, index) => value + extraFoodRevenue[index] + extraBeverageRevenue[index] + otherRevenue[index]);
+
+    new Chart("myChart2", {
+        type: "bar",
+        data: {
+            labels: xValuesBar,
+            datasets: [{
+                label: "Package Revenue",
+                data: packageRevenue,
+                backgroundColor: 'rgba(255,99,132,0.4)',
+                borderColor: 'rgb(255, 99, 132)',
+                borderWidth: 1,
+            }, {
+                label: "Extra Food Revenue",
+                data: extraFoodRevenue,
+                backgroundColor: 'rgba(0,208,31,0.7)',
+                borderColor: 'rgb(14,185,0)',
+                borderWidth: 1,
+            }, {
+                label: "Extra Beverage Revenue",
+                data: extraBeverageRevenue,
+                backgroundColor: 'rgba(5,79,238,0.59)',
+                borderColor: 'rgb(0,69,255)',
+                borderWidth: 1,
+            }, {
+                label: "Other Revenue",
+                data: otherRevenue,
+                backgroundColor: 'rgba(239,255,9,0.6)',
+                borderColor: 'rgb(163,175,2)',
+                borderWidth: 1,
+            }, {
+                label: "Total Revenue",
+                data: totalRevenue,
+                backgroundColor: 'rgba(0,0,0,0.4)',
+                borderColor: 'rgb(0,0,0)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: "Revenue Summary"
+            },
+            legend: {
+                display: true,
+            }
+        }
+    });
+
+    const xValuesDoughnut = ["Agoda", "Booking.com", "FIT-Local", "FIT-Foreign", "Others"];
+    const yValuesDoughnut = [5200000, 3800000, 2300000, 1900000, 100000];
+    const barColorsDoughnut = [
+        "#f60026",
+        "#04ddf8",
+        "#0054b2",
+        "#e6f600",
+        "#04c25d"
+    ];
+
+    const totalAgentRevenue = yValuesDoughnut.reduce((sum, value) => sum + value, 0);
+
+    const ctx = document.getElementById("myChart3").getContext("2d");
+    const myChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+            labels: xValuesDoughnut,
+            datasets: [{
+                backgroundColor: barColorsDoughnut,
+                data: yValuesDoughnut,
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: "Top 5 Agents' Revenue Contribution"
+            },
+            animation: {
+                onComplete: function () {
+                    const chartInstance = this.chart;
+                    const ctx = chartInstance.ctx;
+                    const centerX = (chartInstance.chartArea.left + chartInstance.chartArea.right) / 2;
+                    const centerY = (chartInstance.chartArea.top + chartInstance.chartArea.bottom) / 2;
+
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.font = "13px Arial bold";
+                    ctx.fillStyle = "black";
+                    // ctx.fillText(`Total Agent Revenue \n ${totalAgentRevenue}`, centerX, centerY);
+                    ctx.fillText(`Total Revenue`, centerX, centerY - 10);
+                    ctx.fillText(`${totalAgentRevenue}`, centerX, centerY + 20);
+                }
+            }
+        }
+    });
+
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const years = [2021, 2022, 2023, 2024]; // Update with the desired range
+
+    const xValueRoom = [...Array(31).keys()].map(i => i + 1);
+    const generateRandomData = (length) => Array.from({length}, () => Math.floor(Math.random() * 100));
+
+    const ctx1 = document.getElementById("myChart1").getContext("2d");
+    let myChart1;
+
+    function generateChart(selectedOption) {
+        const selectedYear = parseInt(document.getElementById("yearSelector").value);
+
+        let xValues = [];
+        let datasets = [];
+
+        if (selectedOption === "month") {
+            const selectedMonth = parseInt(document.getElementById("monthSelector").value);
+            const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+            xValues = [...Array(daysInMonth).keys()].map(i => i + 1);
+            datasets = [
+                {
+                    label: "Reservations",
+                    data: generateRandomData(xValues.length),
+                    backgroundColor: 'rgba(255,99,132,0.4)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    borderWidth: 1,
+                },
+                {
+                    label: "Vacant Rooms",
+                    data: generateRandomData(xValues.length),
+                    backgroundColor: 'rgba(0,208,31,0.7)',
+                    borderColor: 'rgb(14,185,0)',
+                    borderWidth: 1,
+                },
+                {
+                    label: "Block/Out Of Order",
+                    data: generateRandomData(xValues.length),
+                    backgroundColor: 'rgba(5,79,238,0.59)',
+                    borderColor: 'rgb(0,69,255)',
+                    borderWidth: 1,
+                }
+            ];
+        } else if (selectedOption === "year") {
+            xValues = months;
+            datasets = [
+                {
+                    label: "Reservations",
+                    data: months.map(() => generateRandomData(1)[0]),
+                    backgroundColor: 'rgb(7,34,210)',
+                    borderColor: 'rgb(248,244,245)',
+                    borderWidth: 1,
+                },
+                {
+                    label: "Vacant Rooms",
+                    data: months.map(() => generateRandomData(1)[0]),
+                    backgroundColor: 'rgb(0,161,24)',
+                    borderColor: 'rgb(14,185,0)',
+                    borderWidth: 1,
+                },
+                {
+                    label: "Block/Out Of Order",
+                    data: months.map(() => generateRandomData(1)[0]),
+                    backgroundColor: 'rgb(178,0,0)',
+                    borderColor: 'rgb(255,255,255)',
+                    borderWidth: 1,
+                }
+            ];
+        }
+
+        if (myChart1) {
+            myChart1.destroy();
+        }
+
+        myChart1 = new Chart(ctx1, {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: datasets
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: selectedOption === "month" ? "Room Occupancy - Monthly" : "Room Occupancy - Yearly"
+                },
+                legend: {
+                    display: true,
+                }
+            }
+        });
+    }
+
+    document.getElementById("chartSelector").addEventListener("change", function () {
+        const selectedOption = this.value;
+        if (selectedOption === "year") {
+            document.getElementById("monthSelector").style.display = "none";
+        } else if (selectedOption === "month") {
+            document.getElementById("monthSelector").style.display = "inline";
+        }
+    });
+
+    document.getElementById("generateButton").addEventListener("click", function () {
+        const selectedOption = document.getElementById("chartSelector").value;
+        generateChart(selectedOption);
+    });
+
+
+    // const xValueRoom =   [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+    // // const reservations = [10,20,30,40,50,60,70,80,90,100,110,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+    // // const vacant =       [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
+    // // const block =        [3,2,3,1,2,1,1,2,5,2,1,1,1,2,3,4,2,2,2,1,4,2,1,2,3,1,1,1,2,5];
+    // // const totalRevenue = packageRevenue.map((value, index) => value + extraFoodRevenue[index] + extraBeverageRevenue[index] + otherRevenue[index]);
+    // // Create a function to generate random data
+    // function generateRandomData(length) {
+    //     return Array.from({ length }, () => Math.floor(Math.random() * 100));
+    // }
+    // const dailyButton = document.getElementById("dailyButton");
+    // const monthlyButton = document.getElementById("monthlyButton");
+    //
+    // const ctx1 = document.getElementById("myChart1").getContext("2d");
+    // let myChart1 = new Chart(ctx1, {
+    // // new Chart("myChart1", {
+    //     type: "bar",
+    //     data: {
+    //         labels: xValueRoom,
+    //         datasets: [{
+    //             label: "Reservations",
+    //             // data: reservations,
+    //             backgroundColor: 'rgba(255,99,132,0.4)',
+    //             borderColor: 'rgb(255, 99, 132)',
+    //             borderWidth: 1,
+    //         }, {
+    //             label: "Vacant Rooms",
+    //             // data: vacant,
+    //             backgroundColor: 'rgba(0,208,31,0.7)',
+    //             borderColor: 'rgb(14,185,0)',
+    //             borderWidth: 1,
+    //         }, {
+    //             label: "Block/Out Of Order",
+    //             // data: block,
+    //             backgroundColor: 'rgba(5,79,238,0.59)',
+    //             borderColor: 'rgb(0,69,255)',
+    //             borderWidth: 1,
+    //         }]
+    //     },
+    //     options: {
+    //         title: {
+    //             display: true,
+    //             text: "Room Occupancy"
+    //         },
+    //         legend: {
+    //             display: true,
+    //         }
+    //     }
+    // });
+    // dailyButton.addEventListener("click", function() {
+    //     const reservations = generateRandomData(xValueRoom.length);
+    //     const vacant = generateRandomData(xValueRoom.length);
+    //     const block = generateRandomData(xValueRoom.length);
+    //
+    //     myChart1.data.datasets[0].data = reservations;
+    //     myChart1.data.datasets[1].data = vacant;
+    //     myChart1.data.datasets[2].data = block;
+    //     myChart1.update();
+    // });
+    //
+    // monthlyButton.addEventListener("click", function() {
+    //     const daysInMonth = 30; // Adjust for different months
+    //     const reservations = generateRandomData(daysInMonth);
+    //     const vacant = generateRandomData(daysInMonth);
+    //     const block = generateRandomData(daysInMonth);
+    //
+    //     myChart1.data.datasets[0].data = reservations;
+    //     myChart1.data.datasets[1].data = vacant;
+    //     myChart1.data.datasets[2].data = block;
+    //     myChart1.update();
+    // });
+
+</script>
+
+</body>
+</html>
